@@ -1,14 +1,24 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Widget, ChatMessage, Space } from '@/types'
+import type { Widget, Space } from '@/types'
+
+interface ChatMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+interface SpaceWithChat extends Space {
+  chatHistory: ChatMessage[]
+}
 
 // Define a unique ID for this store
 export const useSpaceStore = defineStore('space', () => {
   // State
-  const spaces = ref<Space[]>([
+  const spaces = ref<SpaceWithChat[]>([
     // Initialize with one space
     {
       id: '1',
+      name: 'Default Space',
       widgets: [],
       chatHistory: []
     }
@@ -29,6 +39,7 @@ export const useSpaceStore = defineStore('space', () => {
     const newId = String(spaces.value.length + 1)
     spaces.value.push({
       id: newId,
+      name: `Space ${newId}`,
       widgets: [],
       chatHistory: []
     })
@@ -63,8 +74,8 @@ export const useSpaceStore = defineStore('space', () => {
   function updateWidgetPosition(widgetId: string, x: number, y: number) {
     const widget = currentSpace.value.widgets.find(w => w.id === widgetId)
     if (widget) {
-      widget.x = x
-      widget.y = y
+      widget.position.x = x
+      widget.position.y = y
     }
   }
 

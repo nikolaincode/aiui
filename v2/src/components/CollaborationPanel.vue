@@ -121,6 +121,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import UserChat from './UserChat.vue'
+import type { User, Group } from '@/types'
 
 // State
 const isExpanded = ref(false)
@@ -197,21 +198,10 @@ function togglePanel() {
   isExpanded.value = !isExpanded.value
 }
 
-function openChat(entity: any) {
-  if ('members' in entity) {
-    // It's a group
-    activeChat.value = { type: 'group', id: entity.id }
-  } else {
-    // It's a user - toggle if clicking the same user
-    if (activeChat.value?.type === 'user' && activeChat.value?.id === entity.id) {
-      activeChat.value = null
-    } else {
-      activeChat.value = { type: 'user', id: entity.id }
-    }
-  }
-  // Reset unread count when opening chat
-  if (entity.unreadCount) {
-    entity.unreadCount = 0
+function openChat(entity: User | Group) {
+  activeChat.value = {
+    type: 'members' in entity ? 'group' : 'user',
+    id: entity.id
   }
 }
 

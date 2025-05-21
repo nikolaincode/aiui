@@ -91,8 +91,7 @@ const renderChart = () => {
       scales: {
         x: {
           grid: {
-            display: false,
-            drawBorder: false
+            display: false
           },
           ticks: {
             color: '#666',
@@ -108,8 +107,7 @@ const renderChart = () => {
         },
         y: {
           grid: {
-            color: 'rgba(0, 0, 0, 0.05)',
-            drawBorder: false
+            color: 'rgba(0, 0, 0, 0.05)'
           },
           ticks: {
             color: '#666',
