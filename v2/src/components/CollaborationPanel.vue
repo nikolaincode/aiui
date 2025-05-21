@@ -32,7 +32,7 @@
           <div v-for="user in activeUsers" 
                :key="user.id" 
                class="collaboration-panel__user"
-               :class="{ 'collaboration-panel__user--active': activeChat?.type === 'user' && activeChat?.id === user.id }"
+               :class="{ 'collaboration-panel__user--active': activeChat && activeChat.type === 'user' && activeChat.id === user.id }"
                @click="openChat(user)">
             <div class="collaboration-panel__avatar">
               <img :src="user.photo" :alt="user.name" />
@@ -57,7 +57,7 @@
           <div v-for="group in groups" 
                :key="group.id" 
                class="collaboration-panel__group"
-               :class="{ 'collaboration-panel__group--active': activeChat?.type === 'group' && activeChat?.id === group.id }"
+               :class="{ 'collaboration-panel__group--active': activeChat && activeChat.type === 'group' && activeChat.id === group.id }"
                @click="openChat(group)">
             <div class="collaboration-panel__group-content">
               <div class="collaboration-panel__group-avatars">
@@ -160,16 +160,16 @@ const activeUsers = ref([
   }
 ])
 
-const groups = ref([
+const groups = ref<Group[]>([
   { 
     id: 1, 
     name: 'Student Admin', 
     unreadCount: 0,
     members: [
-      { id: 1, name: 'John Doe', photo: 'https://i.pravatar.cc/150?img=1', isOnline: true },
-      { id: 2, name: 'Jane Smith', photo: 'https://i.pravatar.cc/150?img=5', isOnline: false },
-      { id: 3, name: 'Bob Johnson', photo: 'https://i.pravatar.cc/150?img=8', isOnline: true },
-      { id: 4, name: 'Alice Brown', photo: 'https://i.pravatar.cc/150?img=9', isOnline: true }
+      { id: 1, name: 'John Doe', photo: 'https://i.pravatar.cc/150?img=1', color: '#FF5733', unreadCount: 0, isOnline: true },
+      { id: 2, name: 'Jane Smith', photo: 'https://i.pravatar.cc/150?img=5', color: '#33FF57', unreadCount: 0, isOnline: false },
+      { id: 3, name: 'Bob Johnson', photo: 'https://i.pravatar.cc/150?img=8', color: '#3357FF', unreadCount: 0, isOnline: true },
+      { id: 4, name: 'Alice Brown', photo: 'https://i.pravatar.cc/150?img=9', color: '#FF33A8', unreadCount: 0, isOnline: true }
     ]
   },
   { 
@@ -177,11 +177,11 @@ const groups = ref([
     name: 'Generation 2025', 
     unreadCount: 0,
     members: [
-      { id: 5, name: 'Charlie Wilson', photo: 'https://i.pravatar.cc/150?img=3', isOnline: false },
-      { id: 6, name: 'Diana Miller', photo: 'https://i.pravatar.cc/150?img=4', isOnline: true },
-      { id: 7, name: 'Edward Davis', photo: 'https://i.pravatar.cc/150?img=6', isOnline: true },
-      { id: 8, name: 'Fiona Clark', photo: 'https://i.pravatar.cc/150?img=7', isOnline: false },
-      { id: 9, name: 'George Taylor', photo: 'https://i.pravatar.cc/150?img=2', isOnline: true }
+      { id: 5, name: 'Charlie Wilson', photo: 'https://i.pravatar.cc/150?img=3', color: '#33A8FF', unreadCount: 0, isOnline: false },
+      { id: 6, name: 'Diana Miller', photo: 'https://i.pravatar.cc/150?img=4', color: '#A833FF', unreadCount: 0, isOnline: true },
+      { id: 7, name: 'Edward Davis', photo: 'https://i.pravatar.cc/150?img=6', color: '#FFA833', unreadCount: 0, isOnline: true },
+      { id: 8, name: 'Fiona Clark', photo: 'https://i.pravatar.cc/150?img=7', color: '#33FFA8', unreadCount: 0, isOnline: false },
+      { id: 9, name: 'George Taylor', photo: 'https://i.pravatar.cc/150?img=2', color: '#A8FF33', unreadCount: 0, isOnline: true }
     ]
   }
 ])
@@ -199,9 +199,16 @@ function togglePanel() {
 }
 
 function openChat(entity: User | Group) {
-  activeChat.value = {
-    type: 'members' in entity ? 'group' : 'user',
-    id: entity.id
+  if ('members' in entity) {
+    // It's a group
+    activeChat.value = { type: 'group', id: entity.id }
+  } else {
+    // It's a user
+    activeChat.value = { type: 'user', id: entity.id }
+  }
+  // Reset unread count when opening chat
+  if (entity.unreadCount) {
+    entity.unreadCount = 0
   }
 }
 
