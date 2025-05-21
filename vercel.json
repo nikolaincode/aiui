@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/v2/index.html" }
+  ],
+  "buildCommand": "cd v2 && npm install && npm run build",
+  "outputDirectory": "v2/dist",
+  "framework": "vite"
+} 
