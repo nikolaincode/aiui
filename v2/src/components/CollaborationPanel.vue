@@ -107,8 +107,8 @@
 
     <!-- Add UserChat component -->
     <UserChat 
-      v-if="activeChat?.type === 'user'"
-      :user="activeUsers.find(u => u.id === activeChat.id) || null"
+      v-if="activeChat && activeChat.type === 'user'"
+      :user="activeUser"
       @close="activeChat = null"
       @toggle-space="toggleSpaceMode"
     />
@@ -131,6 +131,12 @@ const newGroupName = ref('')
 const inviteEmail = ref('')
 const activeChat = ref<{ type: 'user' | 'group', id: number } | null>(null)
 const isSpaceMode = ref(false)
+
+// Computed
+const activeUser = computed(() => {
+  if (!activeChat.value || activeChat.value.type !== 'user') return null
+  return activeUsers.value.find(u => u.id === activeChat.value?.id) || null
+})
 
 // Mock data - replace with real data from your backend
 const activeUsers = ref([
